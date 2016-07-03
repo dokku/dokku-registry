@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/config/functions"
+source "$PLUGIN_AVAILABLE_PATH/registry/functions"
+
+registry-set-registry() {
+  declare desc="sets the registry for an app"
+  declare APP="$2" DOKKU_REGISTRY_SERVER="$3"
+  local cmd="$1"
+  verify_app_name "$APP"
+
+  dokku_log_info1 "Setting registry to $DOKKU_REGISTRY_SERVER"
+  config_set --no-restart "$APP" DOKKU_REGISTRY_SERVER="$DOKKU_REGISTRY_SERVER"
+}
+
+registry-set-region-cmd "$@

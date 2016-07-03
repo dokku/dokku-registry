@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+[[ " help registry:help " == *" $1 "* ]] || exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+case "$1" in
+  help | registry:help)
+    help_content_func () {
+      declare desc="return registry plugin help content"
+      cat<<help_content
+    registry <app>, Display the configured registry status for an application
+    registry:pull <app> <tag>, Pull an image from the remote registry
+    registry:push <app> <tag>, Push an image to the remote registry
+    registry:set-registry <app> <registry>, Set the registry for an app
+    registry:tag-latest-local <app>, Shows latest local tag version
+    registry:unset-registry <app>, Unsets the registry for an app
+help_content
+    }
+
+    if [[ $1 = "registry:help" ]] ; then
+      echo -e 'Usage: dokku registry[:COMMAND] <app> [<tag>] [<username>] [<password>]'
+      echo ''
+      echo 'Run registry-related commands on an application.'
+      echo ''
+      echo 'Additional commands:'
+      help_content_func | sort | column -c2 -t -s,
+    else
+      help_content_func
+    fi
+    ;;
+
+  *)
+    exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+    ;;
+
+esac

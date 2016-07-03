@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/registry/functions"
+
+registry-pull-cmd() {
+  declare desc="pulls a tag from a docker registry"
+  declare APP="$2" TAG="$3"
+  local cmd="$1"
+
+  dokku_log_info1 "Pulling image from registry"
+  fn-registry-pull "$APP" "$TAG"
+}
+
+registry-pull-cmd "$@"

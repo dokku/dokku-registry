@@ -1,0 +1,53 @@
+# dokku-registry [![Build Status](https://travis-ci.org/josegonzalez/dokku-registry.svg?branch=master)](https://travis-ci.org/josegonzalez/dokku-registry)
+
+Allows you to interact with a Remove Docker Registry.
+
+## requirements
+
+- dokku 0.5.0+
+- docker 1.10.x
+
+## installation
+
+```shell
+# on 0.5.x
+dokku plugin:install https://github.com/dokku/dokku-registry.git  registry
+```
+
+## usage
+
+```
+Usage: dokku registry[:COMMAND] <app> [<tag>] [<registry>]
+
+Run registry-related commands on an application.
+
+Additional commands:
+    registry <app>                               Shows the registry status for an application
+    registry:pull <app> <tag>                    Pull an image from a docker registry
+    registry:push <app> <tag>                    Push an image to a docker registry
+    registry:set-registry <app> <registry>       Set the registry for an app
+    registry:tag-latest-local <app>              Shows latest local tag version
+    registry:unset-registry <app>                Unsets the registry for an app
+```
+
+### Setup
+
+To enable automatic pushing to a remote registry, you'll need to first login to that registry:
+
+```shell
+docker login --username USERNAME --password PASSWORD registry
+```
+
+You also need to set the registry for each app you desire to integrate with:
+
+```shell
+dokku registry:set-registry APP_NAME DOCKER_REGISTRY
+```
+
+Once set, this plugin will:
+
+- on `post-release`, create a tagged image with an auto-incrementing tag number
+- push the new tag to the remote registry
+- delete the new tag locally
+
+Application deletion *will not* clean up remote repositories. Please keep this in mind and adjust your workflow for application deletion accordingly.

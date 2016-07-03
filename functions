@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/config/functions"
+
+fn-registry-enabled() {
+  declare desc="check if registry is enabled for an app"
+  declare APP="$1"
+  local DOKKU_REGISTRY_SERVER REGISTRY_ENABLED
+  verify_app_name "$APP"
+
+  DOKKU_REGISTRY_SERVER=$(config_get "$APP" DOKKU_REGISTRY_SERVER)
+
+  REGISTRY_ENABLED=false
+  if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
+    REGISTRY_ENABLED=true
+  fi
+  echo "$REGISTRY_ENABLED"
+}
+
+fn-registry-pull() {
+  declare desc="pull an image from an remote repository"
+  declare APP="$1" TAG="$2"
+  local DOKKU_REGISTRY_SERVER IMAGE_REPO
+  verify_app_name "$APP"
+
+  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
+    return 0
+  fi
+
+  if [[ -z "$TAG" ]]; then
+    dokku_log_fail "No tag specified"
+  fi
+
+  dokku_log_verbose_quiet "Retrieving image info for application"
+  DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
+  IMAGE_REPO=$(get_app_image_repo "$APP")
+
+  dokku_log_verbose_quiet "Pulling $IMAGE_REPO:$TAG"
+  docker pull "${DOKKU_REGISTRY_SERVER}:${TAG}" | sed "s/^/       /"
+
+  dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG as $IMAGE_REPO:latest"
+  docker tag "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
+  dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pulled"
+}
+
+fn-registry-push() {
+  declare desc="push an image to an remote repository"
+  declare APP="$1" TAG="$2"
+  local DOKKU_REGISTRY_SERVER IMAGE IMAGE_ID IMAGE_REPO IMAGE_TAG
+  verify_app_name "$APP"
+
+  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
+    return 0
+  fi
+
+  if [[ -z "$TAG" ]]; then
+    dokku_log_fail "No tag specified"
+  fi
+
+  dokku_log_verbose_quiet "Retrieving image info for application"
+  DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
+  IMAGE_REPO=$(get_app_image_repo "$APP")
+  IMAGE_TAG="$(get_running_image_tag "$APP")"
+  IMAGE=$(get_app_image_name "$APP" "$IMAGE_TAG")
+  IMAGE_ID=$(docker inspect --format '{{ .Id }}' "$IMAGE")
+
+  dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG in registry format"
+  docker tag "$IMAGE_ID" "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}"
+
+  dokku_log_verbose_quiet "Pushing $IMAGE_REPO:$TAG"
+  docker push "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
+
+  dokku_log_verbose_quiet "Cleaning up"
+  docker rmi "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" &> /dev/null
+
+  dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pushed"
+}
+
+fn-registry-remote-repository() {
+  declare desc="retrieves the latest tag for an app"
+  declare APP="$1"
+  local DOKKU_REGISTRY_SERVER IMAGE_REPO
+  verify_app_name "$APP"
+
+  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
+    return 0
+  fi
+
+  DOKKU_REGISTRY_SERVER="$(config_get "$APP" DOKKU_REGISTRY_SERVER || true)"
+  echo "$DOKKU_REGISTRY_SERVER"
+}
+
+fn-registry-tag-increment() {
+  declare desc="increments the latest tag version for an app"
+  declare APP="$1"
+  local DOKKU_REGISTRY_TAG_VERSION
+  verify_app_name "$APP"
+
+  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
+    return 0
+  fi
+
+  DOKKU_REGISTRY_TAG_VERSION="$(config_get "$APP" DOKKU_REGISTRY_TAG_VERSION || true)"
+
+  if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
+    DOKKU_REGISTRY_TAG_VERSION=0
+  fi
+
+  DOKKU_REGISTRY_TAG_VERSION=$((DOKKU_REGISTRY_TAG_VERSION + 1))
+  dokku_log_verbose_quiet "Bumping tag to $DOKKU_REGISTRY_TAG_VERSION"
+  config_set --no-restart "$APP" DOKKU_REGISTRY_TAG_VERSION="$DOKKU_REGISTRY_TAG_VERSION" > /dev/null
+}
+
+fn-registry-tag-latest-local() {
+  declare desc="retrieves the latest tag for an app"
+  declare APP="$1"
+  local DOKKU_REGISTRY_TAG_VERSION
+  verify_app_name "$APP"
+
+  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
+    return 0
+  fi
+
+  DOKKU_REGISTRY_TAG_VERSION="$(config_get "$APP" DOKKU_REGISTRY_TAG_VERSION || true)"
+
+  if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
+    echo 1
+  fi
+
+  echo "$DOKKU_REGISTRY_TAG_VERSION"
+}
