@@ -4,14 +4,13 @@ Allows you to interact with a remote Docker Registry.
 
 ## requirements
 
-- dokku 0.5.0+
+- dokku 0.6.5+
 - docker 1.10.x
 
 ## installation
 
 ```shell
-# on 0.5.x
-dokku plugin:install https://github.com/dokku/dokku-registry.git  registry
+dokku plugin:install https://github.com/josegonzalez/dokku-registry.git  registry
 ```
 
 ## usage
