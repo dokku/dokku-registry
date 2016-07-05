@@ -1,6 +1,6 @@
 # dokku-registry [![Build Status](https://travis-ci.org/josegonzalez/dokku-registry.svg?branch=master)](https://travis-ci.org/josegonzalez/dokku-registry)
 
-Allows you to interact with a Remove Docker Registry.
+Allows you to interact with a remote Docker Registry.
 
 ## requirements
 
@@ -26,8 +26,10 @@ Additional commands:
     registry:pull <app> <tag>                    Pull an image from a docker registry
     registry:push <app> <tag>                    Push an image to a docker registry
     registry:set-registry <app> <registry>       Set the registry for an app
+    registry:set-username <app> <username>       Set the username for an app
     registry:tag-latest-local <app>              Shows latest local tag version
     registry:unset-registry <app>                Unsets the registry for an app
+    registry:unset-username <app>                Unsets the username for an app
 ```
 
 ### Setup
