@@ -22,14 +22,15 @@ Usage: dokku registry[:COMMAND] <app> [<tag>] [<registry>]
 Run registry-related commands on an application.
 
 Additional commands:
-    registry <app>                               Shows the registry status for an application
-    registry:pull <app> <tag>                    Pull an image from a docker registry
-    registry:push <app> <tag>                    Push an image to a docker registry
-    registry:set-registry <app> <registry>       Set the registry for an app
-    registry:set-username <app> <username>       Set the username for an app
-    registry:tag-latest-local <app>              Shows latest local tag version
-    registry:unset-registry <app>                Unsets the registry for an app
-    registry:unset-username <app>                Unsets the username for an app
+    registry <app>                                       Shows the registry status for an application
+    registry:login <app> <server> <username> <password>  Logs into a docker registry
+    registry:pull <app> <tag>                            Pull an image from a docker registry
+    registry:push <app> <tag>                            Push an image to a docker registry
+    registry:set-registry <app> <registry>               Set the registry for an app
+    registry:set-username <app> <username>               Set the username for an app
+    registry:tag-latest-local <app>                      Shows latest local tag version
+    registry:unset-registry <app>                        Unsets the registry for an app
+    registry:unset-username <app>                        Unsets the username for an app
 ```
 
 ### Setup

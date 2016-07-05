@@ -8,6 +8,7 @@ case "$1" in
       declare desc="return registry plugin help content"
       cat<<help_content
     registry <app>, Display the configured registry status for an application
+    registry:login <app> <server> <username> <password>, Logs into a docker registry
     registry:pull <app> <tag>, Pull an image from the remote registry
     registry:push <app> <tag>, Push an image to the remote registry
     registry:set-registry <app> <registry>, Set the registry for an app
@@ -19,7 +20,7 @@ help_content
     }
 
     if [[ $1 = "registry:help" ]] ; then
-      echo -e 'Usage: dokku registry[:COMMAND] <app> [<tag>] [<username>] [<password>]'
+      echo -e 'Usage: dokku registry[:COMMAND] <app> [<username>] [<tag>] [<username>] [<password>]'
       echo ''
       echo 'Run registry-related commands on an application.'
       echo ''
