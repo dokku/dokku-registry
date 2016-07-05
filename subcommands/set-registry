@@ -4,7 +4,7 @@ source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 source "$PLUGIN_AVAILABLE_PATH/config/functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/functions"
 
-registry-set-registry() {
+registry-set-registry-cmd() {
   declare desc="sets the registry for an app"
   declare APP="$2" DOKKU_REGISTRY_SERVER="$3"
   local cmd="$1"
@@ -14,4 +14,4 @@ registry-set-registry() {
   config_set --no-restart "$APP" DOKKU_REGISTRY_SERVER="$DOKKU_REGISTRY_SERVER"
 }
 
-registry-set-region-cmd "$@
+registry-set-registry-cmd "$@

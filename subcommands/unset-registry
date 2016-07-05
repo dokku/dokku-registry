@@ -14,4 +14,4 @@ registry-unset-registry-cmd() {
   config_unset --no-restart "$APP" DOKKU_REGISTRY_SERVER
 }
 
-registry-unset-account-id-cmd "$@"
+registry-unset-registry-cmd "$@"
