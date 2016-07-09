@@ -8,7 +8,7 @@ case "$1" in
       declare desc="return registry plugin help content"
       cat<<help_content
     registry <app>, Display the configured registry status for an application
-    registry:login <app> <server> <username> <password>, Logs into a docker registry
+    registry:login <server> <username> <password>, Logs into a docker registry
     registry:pull <app> <tag>, Pull an image from the remote registry
     registry:push <app> <tag>, Push an image to the remote registry
     registry:set-registry <app> <registry>, Set the registry for an app
