@@ -37,7 +37,7 @@ Additional commands:
 To enable automatic pushing to a remote registry, you'll need to first login to that registry:
 
 ```shell
-docker login --username USERNAME --password PASSWORD registry
+dokku registry:login REGISTRY_SERVER REGISTRY_USERNAME REGISTRY_PASSWORD
 ```
 
 You also need to set the registry for each app you desire to integrate with:
