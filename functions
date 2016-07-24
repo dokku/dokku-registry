@@ -40,7 +40,7 @@ fn-registry-pull() {
   docker pull "${DOKKU_REGISTRY_SERVER}:${TAG}" | sed "s/^/       /"
 
   dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG as $IMAGE_REPO:latest"
-  docker tag "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
+  docker tag "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
   docker tag "${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pulled"
 }
@@ -67,15 +67,15 @@ fn-registry-push() {
   IMAGE_ID=$(docker inspect --format '{{ .Id }}' "$IMAGE")
 
   dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG in registry format"
-  docker tag "$IMAGE_ID" "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}"
+  docker tag "$IMAGE_ID" "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}"
   docker tag "$IMAGE_ID" "${IMAGE_REPO}:${TAG}"
 
   dokku_log_verbose_quiet "Pushing $IMAGE_REPO:$TAG"
-  docker push "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
+  docker push "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
 
   dokku_log_verbose_quiet "Cleaning up"
   OLD_TAG=$((TAG - 1))
-  docker rmi "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
+  docker rmi "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
   docker rmi "${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
 
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pushed"
