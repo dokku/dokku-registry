@@ -14,4 +14,4 @@ registry-set-username-cmd() {
   config_set --no-restart "$APP" DOKKU_REGISTRY_USERNAME="$DOKKU_REGISTRY_USERNAME"
 }
 
-registry-set-username-cmd "$@
+registry-set-username-cmd "$@"
