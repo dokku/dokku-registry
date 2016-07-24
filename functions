@@ -68,6 +68,7 @@ fn-registry-push() {
 
   dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG in registry format"
   docker tag "$IMAGE_ID" "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}"
+  docker tag "$IMAGE_ID" "${IMAGE_REPO}:${TAG}"
 
   dokku_log_verbose_quiet "Pushing $IMAGE_REPO:$TAG"
   docker push "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
