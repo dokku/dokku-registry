@@ -14,4 +14,4 @@ registry-set-registry-cmd() {
   config_set --no-restart "$APP" DOKKU_REGISTRY_SERVER="$DOKKU_REGISTRY_SERVER"
 }
 
-registry-set-registry-cmd "$@
+registry-set-registry-cmd "$@"
