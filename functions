@@ -41,6 +41,7 @@ fn-registry-pull() {
 
   dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG as $IMAGE_REPO:latest"
   docker tag "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
+  docker tag "${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pulled"
 }
 
@@ -74,6 +75,7 @@ fn-registry-push() {
   dokku_log_verbose_quiet "Cleaning up"
   OLD_TAG=$((TAG - 1))
   docker rmi "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
+  docker rmi "${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
 
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pushed"
 }
