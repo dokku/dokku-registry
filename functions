@@ -72,7 +72,8 @@ fn-registry-push() {
   docker push "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
 
   dokku_log_verbose_quiet "Cleaning up"
-  docker rmi "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${TAG}" &> /dev/null
+  OLD_TAG=$((TAG - 1))
+  docker rmi "${DOKKU_REGISTRY_SERVER}/${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
 
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pushed"
 }
