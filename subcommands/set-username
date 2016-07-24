@@ -10,6 +10,10 @@ registry-set-username-cmd() {
   local cmd="$1"
   verify_app_name "$APP"
 
+  if [[ -z "$DOKKU_REGISTRY_USERNAME" ]]; then
+    dokku_log_fail "No registry username specified"
+  fi
+
   dokku_log_info1 "Setting username to $DOKKU_REGISTRY_USERNAME"
   config_set --no-restart "$APP" DOKKU_REGISTRY_USERNAME="$DOKKU_REGISTRY_USERNAME"
 }

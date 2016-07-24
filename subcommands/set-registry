@@ -10,6 +10,11 @@ registry-set-registry-cmd() {
   local cmd="$1"
   verify_app_name "$APP"
 
+  if [[ -z "$DOKKU_REGISTRY_SERVER" ]]; then
+    dokku_log_fail "No remote registry specified"
+  fi
+
+  DOKKU_REGISTRY_SERVER="${DOKKU_REGISTRY_SERVER%/}/"
   dokku_log_info1 "Setting registry to $DOKKU_REGISTRY_SERVER"
   config_set --no-restart "$APP" DOKKU_REGISTRY_SERVER="$DOKKU_REGISTRY_SERVER"
 }
