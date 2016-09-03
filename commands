@@ -64,7 +64,7 @@ help_content
       # shellcheck disable=SC2034
       declare desc="return $PLUGIN_COMMAND_PREFIX plugin help content"
       cat<<help_list
------> App Name           ECR Status
+-----> App Name           Registry Status
 node-js-app               true
 help_list
     }

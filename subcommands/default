@@ -12,7 +12,7 @@ registry-main-cmd() {
     local APPS="$APP"
   fi
 
-  dokku_col_log_info1_quiet "App Name" "ECR Status"
+  dokku_col_log_info1_quiet "App Name" "Registry Status"
   local app
   for app in $APPS; do
     verify_app_name "$app"
