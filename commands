@@ -43,7 +43,7 @@ case "$1" in
     "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/unset-username" "$@"
     ;;
 
-  help | registry:help)
+  help | $PLUGIN_COMMAND_PREFIX:help)
     help_content_func () {
       # shellcheck disable=SC2034
       declare desc="return $PLUGIN_COMMAND_PREFIX plugin help content"
