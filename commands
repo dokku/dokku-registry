@@ -1,33 +1,56 @@
 #!/usr/bin/env bash
-[[ " help registry:help " == *" $1 "* ]] || exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
+[[ " help $PLUGIN_COMMAND_PREFIX:help " == *" $1 "* ]] || [[ "$1" == "$PLUGIN_COMMAND_PREFIX:"* ]] || exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+source "$PLUGIN_BASE_PATH/common/functions"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/functions"
 
 case "$1" in
   help | registry:help)
     help_content_func () {
-      declare desc="return registry plugin help content"
+      # shellcheck disable=SC2034
+      declare desc="return $PLUGIN_COMMAND_PREFIX plugin help content"
       cat<<help_content
-    registry <app>, Display the configured registry status for an application
-    registry:login <server> <username> <password>, Logs into a docker registry
-    registry:pull <app> <tag>, Pull an image from the remote registry
-    registry:push <app> <tag>, Push an image to the remote registry
-    registry:set-registry <app> <registry>, Set the registry for an app
-    registry:set-username <app> <username>, Set the username for an app
-    registry:tag-latest-local <app>, Shows latest local tag version
-    registry:unset-registry <app>, Unsets the registry for an app
-    registry:unset-username <app>, Unsets the username for an app
+    $PLUGIN_COMMAND_PREFIX <app>, Display the configured registry status for an application
+    $PLUGIN_COMMAND_PREFIX:login <server> <username> <password>, Logs into a docker registry
+    $PLUGIN_COMMAND_PREFIX:pull <app> <tag>, Pull an image from the remote registry
+    $PLUGIN_COMMAND_PREFIX:push <app> <tag>, Push an image to the remote registry
+    $PLUGIN_COMMAND_PREFIX:set-registry <app> <registry>, Set the registry for an app
+    $PLUGIN_COMMAND_PREFIX:set-username <app> <username>, Set the username for an app
+    $PLUGIN_COMMAND_PREFIX:tag-latest-local <app>, Shows latest local tag version
+    $PLUGIN_COMMAND_PREFIX:unset-registry <app>, Unsets the registry for an app
+    $PLUGIN_COMMAND_PREFIX:unset-username <app>, Unsets the username for an app
 help_content
     }
 
-    if [[ $1 = "registry:help" ]] ; then
-      echo -e 'Usage: dokku registry[:COMMAND] <app> [<username>] [<tag>] [<username>] [<password>]'
+    help_list_func() {
+      # shellcheck disable=SC2034
+      declare desc="return $PLUGIN_COMMAND_PREFIX plugin help content"
+      cat<<help_list
+-----> App Name      ECR Status
+       node-js-app   true
+help_list
+    }
+
+    if [[ $1 = "$PLUGIN_COMMAND_PREFIX:help" ]] ; then
+      echo -e "Usage: dokku $PLUGIN_COMMAND_PREFIX[:COMMAND] <app> [<username>] [<tag>] [<username>] [<password>]"
       echo ''
       echo 'Run registry-related commands on an application.'
       echo ''
+      echo 'Example:'
+      echo ''
+      echo "\$ dokku $PLUGIN_COMMAND_PREFIX"
+      help_list_func
+      echo ''
       echo 'Additional commands:'
       help_content_func | sort | column -c2 -t -s,
-    else
+    elif [[ $(ps -o command= $PPID) == *"--all"* ]]; then
       help_content_func
+    else
+      cat<<help_desc
+    $PLUGIN_COMMAND_PREFIX, Plugin for managing docker registry interaction
+help_desc
     fi
     ;;
 
