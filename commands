@@ -7,6 +7,42 @@ source "$PLUGIN_BASE_PATH/common/functions"
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/functions"
 
 case "$1" in
+  $PLUGIN_COMMAND_PREFIX)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/default" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:login)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/login" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:pull)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/pull" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:push)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/push" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:set-registry)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/set-registry" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:set-username)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/set-username" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:tag-latest-local)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/tag-latest-local" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:unset-registry)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/unset-registry" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:unset-username)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/unset-username" "$@"
+    ;;
+
   help | registry:help)
     help_content_func () {
       # shellcheck disable=SC2034
