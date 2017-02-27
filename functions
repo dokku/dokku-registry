@@ -34,7 +34,7 @@ fn-registry-pull() {
 
   dokku_log_verbose_quiet "Retrieving image info for application"
   DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
-  IMAGE_REPO=$(get_app_image_repo "$APP")
+  IMAGE_REPO=$(get_app_image_repo "$APP" 2>/dev/null)
   IMAGE_REPO=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_IMAGE "$IMAGE_REPO")
 
   dokku_log_verbose_quiet "Pulling $IMAGE_REPO:$TAG"
@@ -62,7 +62,7 @@ fn-registry-push() {
 
   dokku_log_verbose_quiet "Retrieving image info for application"
   DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
-  IMAGE_REPO=$(get_app_image_repo "$APP")
+  IMAGE_REPO=$(get_app_image_repo "$APP" 2>/dev/null)
   IMAGE_REPO=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_IMAGE "$IMAGE_REPO")
   IMAGE_TAG="$(get_running_image_tag "$APP")"
   IMAGE=$(get_app_image_name "$APP" "$IMAGE_TAG")
