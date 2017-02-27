@@ -37,7 +37,7 @@ fn-registry-pull() {
   IMAGE_REPO=$(get_app_image_repo "$APP")
 
   dokku_log_verbose_quiet "Pulling $IMAGE_REPO:$TAG"
-  docker pull "${DOKKU_REGISTRY_SERVER}:${TAG}" | sed "s/^/       /"
+  docker pull "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
 
   dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG as $IMAGE_REPO:latest"
   docker tag "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}" "${IMAGE_REPO}:latest"
