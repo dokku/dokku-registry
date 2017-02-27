@@ -25,9 +25,11 @@ Additional commands:
     registry:login <server> <username> <password>        Logs into a docker registry
     registry:pull <app> <tag>                            Pull an image from a docker registry
     registry:push <app> <tag>                            Push an image to a docker registry
+    registry:set-image <app> <IMAGE>                     Set the image name for an app
     registry:set-registry <app> <registry>               Set the registry for an app
     registry:set-username <app> <username>               Set the username for an app
     registry:tag-latest-local <app>                      Shows latest local tag version
+    registry:unset-image <app> <IMAGE>                   Unsets the image name for an app
     registry:unset-registry <app>                        Unsets the registry for an app
     registry:unset-username <app>                        Unsets the username for an app
 ```

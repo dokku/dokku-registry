@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/registry/functions"
+
+registry-set-image-cmd() {
+  declare desc="sets the image for an app"
+  declare APP="$2" DOKKU_REGISTRY_IMAGE="$3"
+  local cmd="$1"
+  verify_app_name "$APP"
+
+  if [[ -z "$DOKKU_REGISTRY_IMAGE" ]]; then
+    dokku_log_fail "No image specified"
+  fi
+
+  dokku_log_info1 "Setting image to $DOKKU_REGISTRY_IMAGE"
+  fn-registry-config-write "$APP" DOKKU_REGISTRY_IMAGE "$DOKKU_REGISTRY_IMAGE"
+}
+
+registry-set-image-cmd "$@"

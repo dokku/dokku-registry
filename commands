@@ -23,6 +23,10 @@ case "$1" in
     "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/push" "$@"
     ;;
 
+  $PLUGIN_COMMAND_PREFIX:set-image)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/set-registry" "$@"
+    ;;
+
   $PLUGIN_COMMAND_PREFIX:set-registry)
     "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/set-registry" "$@"
     ;;
@@ -33,6 +37,10 @@ case "$1" in
 
   $PLUGIN_COMMAND_PREFIX:tag-latest-local)
     "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/tag-latest-local" "$@"
+    ;;
+
+  $PLUGIN_COMMAND_PREFIX:unset-image)
+    "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/subcommands/unset-image" "$@"
     ;;
 
   $PLUGIN_COMMAND_PREFIX:unset-registry)
@@ -52,9 +60,11 @@ case "$1" in
     $PLUGIN_COMMAND_PREFIX:login <server> <username> <password>, Logs into a docker registry
     $PLUGIN_COMMAND_PREFIX:pull <app> <tag>, Pull an image from the remote registry
     $PLUGIN_COMMAND_PREFIX:push <app> <tag>, Push an image to the remote registry
+    $PLUGIN_COMMAND_PREFIX:set-image <app> <image>, Set the image name for an app
     $PLUGIN_COMMAND_PREFIX:set-registry <app> <registry>, Set the registry for an app
     $PLUGIN_COMMAND_PREFIX:set-username <app> <username>, Set the username for an app
     $PLUGIN_COMMAND_PREFIX:tag-latest-local <app>, Shows latest local tag version
+    $PLUGIN_COMMAND_PREFIX:unset-image <app>, Unsets the image name for an app
     $PLUGIN_COMMAND_PREFIX:unset-registry <app>, Unsets the registry for an app
     $PLUGIN_COMMAND_PREFIX:unset-username <app>, Unsets the username for an app
 help_content
