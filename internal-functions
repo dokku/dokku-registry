@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+fn-registry-config-delete() {
+  declare desc="delete a key from the dokku-registry configuration for an app"
+  declare APP="$1" KEY="$2"
+  verify_app_name "$APP"
+
+  rm -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
+}
+
+fn-registry-config-destroy() {
+  declare desc="destroy the dokku-registry configuration for an app"
+  declare APP="$1"
+  verify_app_name "$APP"
+
+  if [[ "$APP" == "_all_" ]]; then
+    rm -rf "${PLUGIN_CONFIG_ROOT:?}"
+  else
+    rm -rf "${PLUGIN_CONFIG_ROOT:?}/${APP}"
+  fi
+}
+
+fn-registry-config-get() {
+  declare desc="returns the configured key for an app"
+  declare APP="$1" KEY="$2" DEFAULT="$3"
+  local CONFIG_VALUE
+  verify_app_name "$APP"
+
+  CONFIG_VALUE="$(fn-registry-config-read "$APP" "$KEY" || true)"
+  if [[ -z "$CONFIG_VALUE" ]]; then
+    CONFIG_VALUE="$DEFAULT"
+  fi
+  echo "$CONFIG_VALUE"
+}
+
+fn-registry-config-read() {
+  declare desc="read a key from the dokku-registry configuration for an app"
+  declare APP="$1" KEY="$2"
+  verify_app_name "$APP"
+  
+  if [[ ! -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}" ]]; then
+    exit 1
+  fi
+
+  cat "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
+}
+
+fn-registry-config-write() {
+  declare desc="read a key from the dokku-registry configuration for an app"
+  declare APP="$1" KEY="$2" VALUE="$3"
+  verify_app_name "$APP"
+
+  mkdir -p "${PLUGIN_CONFIG_ROOT}/${APP}"
+  echo "$VALUE" > "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
+  chmod 600 "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
+}

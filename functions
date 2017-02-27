@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
-source "$PLUGIN_AVAILABLE_PATH/config/functions"
+source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
 
 fn-registry-enabled() {
   declare desc="check if registry is enabled for an app"
@@ -9,7 +9,7 @@ fn-registry-enabled() {
   local DOKKU_REGISTRY_SERVER REGISTRY_ENABLED
   verify_app_name "$APP"
 
-  DOKKU_REGISTRY_SERVER=$(config_get "$APP" DOKKU_REGISTRY_SERVER)
+  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_SERVER)
 
   REGISTRY_ENABLED=false
   if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
@@ -92,14 +92,14 @@ fn-registry-push() {
 fn-registry-remote-repository() {
   declare desc="retrieves the latest tag for an app"
   declare APP="$1"
-  local DOKKU_REGISTRY_SERVER IMAGE_REPO
+  local DOKKU_REGISTRY_SERVER
   verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
   fi
 
-  DOKKU_REGISTRY_SERVER="$(config_get "$APP" DOKKU_REGISTRY_SERVER || true)"
+  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_SERVER)
   echo "$DOKKU_REGISTRY_SERVER"
 }
 
@@ -113,15 +113,14 @@ fn-registry-tag-increment() {
     return 0
   fi
 
-  DOKKU_REGISTRY_TAG_VERSION="$(config_get "$APP" DOKKU_REGISTRY_TAG_VERSION || true)"
-
+  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_TAG_VERSION)
   if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
     DOKKU_REGISTRY_TAG_VERSION=0
   fi
 
   DOKKU_REGISTRY_TAG_VERSION=$((DOKKU_REGISTRY_TAG_VERSION + 1))
   dokku_log_verbose_quiet "Bumping tag to $DOKKU_REGISTRY_TAG_VERSION"
-  config_set --no-restart "$APP" DOKKU_REGISTRY_TAG_VERSION="$DOKKU_REGISTRY_TAG_VERSION" > /dev/null
+  fn-registry-config-write "$APP" DOKKU_REGISTRY_TAG_VERSION "$DOKKU_REGISTRY_TAG_VERSION"
 }
 
 fn-registry-tag-latest-local() {
@@ -134,8 +133,7 @@ fn-registry-tag-latest-local() {
     return 0
   fi
 
-  DOKKU_REGISTRY_TAG_VERSION="$(config_get "$APP" DOKKU_REGISTRY_TAG_VERSION || true)"
-
+  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_TAG_VERSION)
   if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
     echo 1
   fi
@@ -153,8 +151,7 @@ fn-registry-image-repo() {
     return 0
   fi
 
-  DOKKU_REGISTRY_USERNAME="$(config_get "$APP" DOKKU_REGISTRY_USERNAME || true)"
-
+  DOKKU_REGISTRY_USERNAME=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_USERNAME)
   if [[ -z "$DOKKU_REGISTRY_USERNAME" ]]; then
     return
   fi

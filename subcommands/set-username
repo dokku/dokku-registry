@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
-source "$PLUGIN_AVAILABLE_PATH/config/functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/functions"
 
 registry-set-username-cmd() {
@@ -15,7 +14,7 @@ registry-set-username-cmd() {
   fi
 
   dokku_log_info1 "Setting username to $DOKKU_REGISTRY_USERNAME"
-  config_set --no-restart "$APP" DOKKU_REGISTRY_USERNAME="$DOKKU_REGISTRY_USERNAME"
+  fn-registry-config-write "$APP" DOKKU_REGISTRY_USERNAME "$DOKKU_REGISTRY_USERNAME"
 }
 
 registry-set-username-cmd "$@"
