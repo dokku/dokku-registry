@@ -14,11 +14,11 @@ fn-registry-config-delete() {
 fn-registry-config-destroy() {
   declare desc="destroy the dokku-registry configuration for an app"
   declare APP="$1"
-  verify_app_name "$APP"
 
   if [[ "$APP" == "_all_" ]]; then
     rm -rf "${PLUGIN_CONFIG_ROOT:?}"
   else
+    verify_app_name "$APP"
     rm -rf "${PLUGIN_CONFIG_ROOT:?}/${APP}"
   fi
 }
