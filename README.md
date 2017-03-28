@@ -16,17 +16,11 @@ dokku plugin:install https://github.com/josegonzalez/dokku-registry.git registry
 ## commands
 
 ```shell
-registry <app>                                # Shows the registry status for an application
 registry:login <server> <username> <password> # Logs into a docker registry
 registry:report <app> [<flag>]                # Shows the full report for an app
 registry:pull <app> <tag>                     # Pull an image from a docker registry
 registry:push <app> <tag>                     # Push an image to a docker registry
-registry:set-image <app> <IMAGE>              # Set the image name for an app
-registry:set-server <app> <registry>          # Set the registry for an app
-registry:set-username <app> <username>        # Set the username for an app
-registry:unset-image <app> <IMAGE>            # Unsets the image name for an app
-registry:unset-server <app>                   # Unsets the registry for an app
-registry:unset-username <app>                 # Unsets the username for an app
+registry:set <app> <key> [<value>]            # Set or clear a key
 ```
 
 ## usage

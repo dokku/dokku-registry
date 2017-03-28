@@ -64,7 +64,7 @@ fn-registry-enabled() {
   local DOKKU_REGISTRY_SERVER REGISTRY_ENABLED
   verify_app_name "$APP"
 
-  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_SERVER)
+  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" "server")
   REGISTRY_ENABLED=false
   if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
     REGISTRY_ENABLED=true
@@ -89,7 +89,7 @@ fn-registry-pull() {
   dokku_log_verbose_quiet "Retrieving image info for application"
   DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
   IMAGE_REPO=$(get_app_image_repo "$APP")
-  IMAGE_REPO=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_IMAGE "$IMAGE_REPO")
+  IMAGE_REPO=$(fn-registry-config-get "$APP" "image" "$IMAGE_REPO")
 
   dokku_log_verbose_quiet "Pulling $IMAGE_REPO:$TAG"
   docker pull "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
@@ -117,7 +117,7 @@ fn-registry-push() {
   dokku_log_verbose_quiet "Retrieving image info for application"
   DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
   IMAGE_REPO=$(get_app_image_repo "$APP")
-  IMAGE_REPO=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_IMAGE "$IMAGE_REPO")
+  IMAGE_REPO=$(fn-registry-config-get "$APP" "image" "$IMAGE_REPO")
   IMAGE_TAG="$(get_running_image_tag "$APP")"
   IMAGE=$(get_app_image_name "$APP" "$IMAGE_TAG")
   IMAGE_ID=$(docker inspect --format '{{ .Id }}' "$IMAGE")
@@ -155,7 +155,7 @@ fn-registry-remote-repository() {
     return 0
   fi
 
-  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_SERVER)
+  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" "server")
   echo "$DOKKU_REGISTRY_SERVER"
 }
 
@@ -169,14 +169,14 @@ fn-registry-tag-increment() {
     return 0
   fi
 
-  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_TAG_VERSION)
+  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" "tag-version")
   if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
     DOKKU_REGISTRY_TAG_VERSION=0
   fi
 
   DOKKU_REGISTRY_TAG_VERSION=$((DOKKU_REGISTRY_TAG_VERSION + 1))
   dokku_log_verbose_quiet "Bumping tag to $DOKKU_REGISTRY_TAG_VERSION"
-  fn-registry-config-write "$APP" DOKKU_REGISTRY_TAG_VERSION "$DOKKU_REGISTRY_TAG_VERSION"
+  fn-registry-config-write "$APP" "tag-version" "$DOKKU_REGISTRY_TAG_VERSION"
 }
 
 fn-registry-tag-latest-local() {
@@ -189,7 +189,7 @@ fn-registry-tag-latest-local() {
     return 0
   fi
 
-  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_TAG_VERSION)
+  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" "tag-version")
   if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
     echo 1
   fi
@@ -207,7 +207,7 @@ fn-registry-image-repo() {
     return 0
   fi
 
-  DOKKU_REGISTRY_USERNAME=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_USERNAME)
+  DOKKU_REGISTRY_USERNAME=$(fn-registry-config-get "$APP" "username")
   if [[ -z "$DOKKU_REGISTRY_USERNAME" ]]; then
     return
   fi
@@ -222,13 +222,8 @@ fn-registry-help-content() {
     ${PLUGIN_COMMAND_PREFIX}:login <server> <username> <password>, Logs into a docker registry
     ${PLUGIN_COMMAND_PREFIX}:pull <app> <tag>, Pull an image from the remote registry
     ${PLUGIN_COMMAND_PREFIX}:push <app> <tag>, Push an image to the remote registry
-    ${PLUGIN_COMMAND_PREFIX}:set-image <app> <image>, Set the image name for an app
-    ${PLUGIN_COMMAND_PREFIX}:set-server <app> <registry>, Set the registry for an app
-    ${PLUGIN_COMMAND_PREFIX}:set-username <app> <username>, Set the username for an app
+    ${PLUGIN_COMMAND_PREFIX}:set <app> <key> <value>, Set or clear a key
     ${PLUGIN_COMMAND_PREFIX}:tag-latest-local <app>, Shows latest local tag version
-    ${PLUGIN_COMMAND_PREFIX}:unset-image <app>, Unsets the image name for an app
-    ${PLUGIN_COMMAND_PREFIX}:unset-server <app>, Unsets the registry for an app
-    ${PLUGIN_COMMAND_PREFIX}:unset-username <app>, Unsets the username for an app
 help_content
 }
 
@@ -259,10 +254,10 @@ cmd-registry-report() {
 
   flag_map=(
     "--registry-enabled: $(fn-registry-enabled "$APP")"
-    "--registry-image: $(fn-registry-config-read "$APP" DOKKU_REGISTRY_IMAGE)"
-    "--registry-server: $(fn-registry-config-read "$APP" DOKKU_REGISTRY_SERVER)"
+    "--registry-image: $(fn-registry-config-get "$APP" "image")"
+    "--registry-server: $(fn-registry-config-get "$APP" "server")"
     "--registry-tag-latest-local: $(fn-registry-tag-latest-local)"
-    "--registry-username: $(fn-registry-config-read "$APP" DOKKU_REGISTRY_USERNAME)"
+    "--registry-username: $(fn-registry-config-get "$APP" "username")"
   )
   if [[ -z "$INFO_FLAG" ]]; then
     dokku_log_info2_quiet "${APP} Registry Information"
