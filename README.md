@@ -34,7 +34,7 @@ dokku registry:login REGISTRY_SERVER REGISTRY_USERNAME REGISTRY_PASSWORD
 You also need to set the registry for each app you desire to integrate with:
 
 ```shell
-dokku registry:set-server APP_NAME DOCKER_REGISTRY
+dokku registry:set APP_NAME server DOCKER_REGISTRY
 ```
 
 Once set, this plugin will:
