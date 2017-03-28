@@ -1,4 +1,4 @@
 [plugin]
 description = "manages integration with remote docker registries"
-version = "0.2.3"
+version = "0.2.4"
 [plugin.config]
