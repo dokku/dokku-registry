@@ -65,7 +65,6 @@ fn-registry-enabled() {
   verify_app_name "$APP"
 
   DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" DOKKU_REGISTRY_SERVER)
-
   REGISTRY_ENABLED=false
   if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
     REGISTRY_ENABLED=true
