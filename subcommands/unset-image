@@ -14,4 +14,4 @@ registry-unset-image-cmd() {
   fn-registry-config-delete "$APP" DOKKU_REGISTRY_IMAGE
 }
 
-registry-unset-registry-cmd "$@"
+registry-unset-server-cmd "$@"

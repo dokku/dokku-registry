@@ -4,7 +4,7 @@ source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-registry-set-registry-cmd() {
+registry-set-server-cmd() {
   declare desc="sets the registry for an app"
   declare APP="$2" DOKKU_REGISTRY_SERVER="$3"
   local cmd="$1"
@@ -19,4 +19,4 @@ registry-set-registry-cmd() {
   fn-registry-config-write "$APP" DOKKU_REGISTRY_SERVER "$DOKKU_REGISTRY_SERVER"
 }
 
-registry-set-registry-cmd "$@"
+registry-set-server-cmd "$@"

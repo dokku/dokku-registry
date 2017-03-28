@@ -1,24 +1,7 @@
 #!/usr/bin/env bash
 source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")" )" && pwd)/config"
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
-source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
+source "$PLUGIN_AVAILABLE_PATH/global-cert/internal-functions"
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-registry-main-cmd() {
-  declare desc="shows the registry status of an app"
-  declare APP="$2"
-  local cmd="$1"
-  local APPS=$(dokku_apps)
-  if [[ -n "$APP" ]]; then
-    local APPS="$APP"
-  fi
-
-  dokku_col_log_info1_quiet "App Name" "Registry Status"
-  local app
-  for app in $APPS; do
-    verify_app_name "$app"
-    dokku_col_log_msg "$app" "$(fn-registry-enabled "$app")"
-  done
-}
-
-registry-main-cmd "$@"
+cmd-registry-help "$PLUGIN_COMMAND_PREFIX:help"

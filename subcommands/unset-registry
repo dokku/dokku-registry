@@ -4,7 +4,7 @@ source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-registry-unset-registry-cmd() {
+registry-unset-server-cmd() {
   declare desc="unsets the registry for an app"
   declare APP="$2"
   local cmd="$1"
@@ -14,4 +14,4 @@ registry-unset-registry-cmd() {
   fn-registry-config-delete "$APP" DOKKU_REGISTRY_SERVER
 }
 
-registry-unset-registry-cmd "$@"
+registry-unset-server-cmd "$@"

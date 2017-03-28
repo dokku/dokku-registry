@@ -1,4 +1,4 @@
 [plugin]
-description = "dokku plugin manage integration with docker registries"
+description = "manages integration with remote docker registries"
 version = "0.0.1"
 [plugin.config]

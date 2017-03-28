@@ -224,11 +224,11 @@ fn-registry-help-content() {
     ${PLUGIN_COMMAND_PREFIX}:pull <app> <tag>, Pull an image from the remote registry
     ${PLUGIN_COMMAND_PREFIX}:push <app> <tag>, Push an image to the remote registry
     ${PLUGIN_COMMAND_PREFIX}:set-image <app> <image>, Set the image name for an app
-    ${PLUGIN_COMMAND_PREFIX}:set-registry <app> <registry>, Set the registry for an app
+    ${PLUGIN_COMMAND_PREFIX}:set-server <app> <registry>, Set the registry for an app
     ${PLUGIN_COMMAND_PREFIX}:set-username <app> <username>, Set the username for an app
     ${PLUGIN_COMMAND_PREFIX}:tag-latest-local <app>, Shows latest local tag version
     ${PLUGIN_COMMAND_PREFIX}:unset-image <app>, Unsets the image name for an app
-    ${PLUGIN_COMMAND_PREFIX}:unset-registry <app>, Unsets the registry for an app
+    ${PLUGIN_COMMAND_PREFIX}:unset-server <app>, Unsets the registry for an app
     ${PLUGIN_COMMAND_PREFIX}:unset-username <app>, Unsets the username for an app
 help_content
 }
@@ -237,7 +237,7 @@ cmd-registry-help() {
   if [[ $1 = "${PLUGIN_COMMAND_PREFIX}:help" ]] ; then
     echo -e "Usage: dokku $PLUGIN_COMMAND_PREFIX[:COMMAND] <app> [<username>] [<tag>] [<username>] [<password>]"
     echo ''
-    echo 'Run registry-related commands on an application.'
+    echo 'Manages interaction with remote Docker Registries.'
     echo ''
     echo 'Additional commands:'
     fn-registry-help-content | sort | column -c2 -t -s,
@@ -245,7 +245,48 @@ cmd-registry-help() {
     fn-registry-help-content
   else
     cat<<help_desc
-    ${PLUGIN_COMMAND_PREFIX}, Plugin for adding global certificates
+    ${PLUGIN_COMMAND_PREFIX}, Manages interaction with remote Docker Registries
 help_desc
+  fi
+}
+
+cmd-registry-report() {
+  declare desc="Display the configured registry status for an application"
+  declare cmd="$PLUGIN_COMMAND_PREFIX:report" argv=("$@"); [[ ${argv[0]} == "$cmd" ]] && shift 1
+  declare APP="$1" INFO_FLAG="$2"
+  local flag flag_map key match valid_flags value_exists
+  [[ -z "$APP" ]] && dokku_log_fail "Please specify an app to run the command on"
+  verify_app_name "$APP"
+
+  flag_map=(
+    "--registry-enabled: $(fn-registry-enabled "$APP")"
+    "--registry-image: $(fn-registry-config-read "$APP" DOKKU_REGISTRY_IMAGE)"
+    "--registry-server: $(fn-registry-config-read "$APP" DOKKU_REGISTRY_SERVER)"
+    "--registry-tag-latest-local: $(fn-registry-tag-latest-local)"
+    "--registry-username: $(fn-registry-config-read "$APP" DOKKU_REGISTRY_USERNAME)"
+  )
+  if [[ -z "$INFO_FLAG" ]]; then
+    dokku_log_info2_quiet "${APP} Registry Information"
+    for flag in "${flag_map[@]}"; do
+      key="$(echo "${flag#--}" | cut -f1 -d' ' | tr - ' ')"
+      dokku_log_verbose "$(printf "%-20s %-25s" "${key^}" "${flag#*: }")"
+    done
+  else
+    match=false
+    value_exists=false
+    for flag in "${flag_map[@]}"; do
+      valid_flags="${valid_flags} $(echo "$flag" | cut -d':' -f1)"
+      if [[ "$flag" == "${INFO_FLAG}:"* ]]; then
+        value=${flag#*: }
+        size="${#value}"
+        if [[ "$size" -ne 0 ]]; then
+          echo "$value" && match=true && value_exists=true
+        else
+          match=true
+        fi
+      fi
+    done
+    [[ "$match" == "true" ]] || dokku_log_fail "Invalid flag passed, valid flags:${valid_flags}"
+    [[ "$value_exists" == "true" ]] || dokku_log_fail "not deployed"
   fi
 }
