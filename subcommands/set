@@ -26,7 +26,7 @@ registry-set-cmd() {
     dokku_log_fail "Invalid key specified, valid keys include: image, server, username"
   fi
 
-  if [[ -z "$KEY" ]]; then
+  if [[ -z "$VALUE" ]]; then
     if [[ "$key" == "server" ]]; then
       VALUE="${VALUE%/}/"
     fi
