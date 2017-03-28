@@ -4,7 +4,7 @@ Allows you to interact with a remote Docker Registry.
 
 ## requirements
 
-- dokku 0.6.5+
+- dokku 0.7.0+
 - docker 1.10.x
 
 ## installation
@@ -13,28 +13,23 @@ Allows you to interact with a remote Docker Registry.
 dokku plugin:install https://github.com/josegonzalez/dokku-registry.git  registry
 ```
 
+## commands
+
+```shell
+registry <app>                                # Shows the registry status for an application
+registry:login <server> <username> <password> # Logs into a docker registry
+registry:pull <app> <tag>                     # Pull an image from a docker registry
+registry:push <app> <tag>                     # Push an image to a docker registry
+registry:set-image <app> <IMAGE>              # Set the image name for an app
+registry:set-registry <app> <registry>        # Set the registry for an app
+registry:set-username <app> <username>        # Set the username for an app
+registry:tag-latest-local <app>               # Shows latest local tag version
+registry:unset-image <app> <IMAGE>            # Unsets the image name for an app
+registry:unset-registry <app>                 # Unsets the registry for an app
+registry:unset-username <app>                 # Unsets the username for an app
+```
+
 ## usage
-
-```
-Usage: dokku registry[:COMMAND] <app> [<tag>] [<registry>]
-
-Run registry-related commands on an application.
-
-Additional commands:
-    registry <app>                                       Shows the registry status for an application
-    registry:login <server> <username> <password>        Logs into a docker registry
-    registry:pull <app> <tag>                            Pull an image from a docker registry
-    registry:push <app> <tag>                            Push an image to a docker registry
-    registry:set-image <app> <IMAGE>                     Set the image name for an app
-    registry:set-registry <app> <registry>               Set the registry for an app
-    registry:set-username <app> <username>               Set the username for an app
-    registry:tag-latest-local <app>                      Shows latest local tag version
-    registry:unset-image <app> <IMAGE>                   Unsets the image name for an app
-    registry:unset-registry <app>                        Unsets the registry for an app
-    registry:unset-username <app>                        Unsets the username for an app
-```
-
-### Setup
 
 To enable automatic pushing to a remote registry, you'll need to first login to that registry:
 
