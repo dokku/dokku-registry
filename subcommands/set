@@ -18,7 +18,7 @@ registry-set-cmd() {
   declare desc="sets a registry configuration value for an app"
   local cmd="$PLUGIN_COMMAND_PREFIX:set" argv=("$@"); [[ ${argv[0]} == "$cmd" ]] && shift 1
   declare APP="$1" KEY="$2" VALUE="$3"
-  local VALID_KEYS=("image" "server" "username")
+  local VALID_KEYS=("image-repo" "server" "username")
   [[ -z "$APP" ]] && dokku_log_fail "Please specify an app to run the command on"
   [[ -z "$KEY" ]] && dokku_log_fail "No key specified"
 

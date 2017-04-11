@@ -88,8 +88,7 @@ fn-registry-pull() {
 
   dokku_log_verbose_quiet "Retrieving image info for application"
   DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
-  IMAGE_REPO=$(get_app_image_repo "$APP")
-  IMAGE_REPO=$(fn-registry-config-get "$APP" "image" "$IMAGE_REPO")
+  IMAGE_REPO=$(fn-registry-image-repo "$APP")
 
   dokku_log_verbose_quiet "Pulling $IMAGE_REPO:$TAG"
   docker pull "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}" | sed "s/^/       /"
@@ -116,8 +115,7 @@ fn-registry-push() {
 
   dokku_log_verbose_quiet "Retrieving image info for application"
   DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
-  IMAGE_REPO=$(get_app_image_repo "$APP")
-  IMAGE_REPO=$(fn-registry-config-get "$APP" "image" "$IMAGE_REPO")
+  IMAGE_REPO=$(fn-registry-image-repo "$APP")
   IMAGE_TAG="$(get_running_image_tag "$APP")"
   IMAGE=$(get_app_image_name "$APP" "$IMAGE_TAG")
   IMAGE_ID=$(docker inspect --format '{{ .Id }}' "$IMAGE")
@@ -143,6 +141,16 @@ fn-registry-push() {
   fi
 
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pushed"
+}
+
+fn-registry-image-repo() {
+  declare desc="retrieves the image repo name (normally dokku/APP) for a given app"
+  declare APP="$1"
+  local IMAGE_REPO
+
+  IMAGE_REPO=$(get_app_image_repo "$APP")
+  IMAGE_REPO=$(fn-registry-config-get "$APP" "image-repo" "$IMAGE_REPO")
+  echo "$IMAGE_REPO"
 }
 
 fn-registry-remote-repository() {
@@ -255,7 +263,7 @@ cmd-registry-report() {
 
   flag_map=(
     "--registry-enabled: $(fn-registry-enabled "$APP")"
-    "--registry-image: $(fn-registry-config-get "$APP" "image")"
+    "--registry-image: $(fn-registry-image-repo "$APP")"
     "--registry-server: $(fn-registry-config-get "$APP" "server")"
     "--registry-tag-latest-local: $(fn-registry-tag-latest-local)"
     "--registry-username: $(fn-registry-config-get "$APP" "username")"
