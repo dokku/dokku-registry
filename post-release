@@ -6,7 +6,6 @@ set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 registry-post-release-hook() {
   declare desc="pushes an app after a release to the docker registry"
   declare APP="$1"
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0

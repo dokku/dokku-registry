@@ -6,7 +6,6 @@ set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 fn-registry-config-delete() {
   declare desc="delete a key from the dokku-registry configuration for an app"
   declare APP="$1" KEY="$2"
-  verify_app_name "$APP"
 
   rm -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
 }
@@ -18,7 +17,6 @@ fn-registry-config-destroy() {
   if [[ "$APP" == "_all_" ]]; then
     rm -rf "${PLUGIN_CONFIG_ROOT:?}"
   else
-    verify_app_name "$APP"
     rm -rf "${PLUGIN_CONFIG_ROOT:?}/${APP}"
   fi
 }
@@ -27,7 +25,6 @@ fn-registry-config-get() {
   declare desc="returns the configured key for an app"
   declare APP="$1" KEY="$2" DEFAULT="$3"
   local CONFIG_VALUE
-  verify_app_name "$APP"
 
   CONFIG_VALUE="$(fn-registry-config-read "$APP" "$KEY" || true)"
   if [[ -z "$CONFIG_VALUE" ]]; then
@@ -39,7 +36,6 @@ fn-registry-config-get() {
 fn-registry-config-read() {
   declare desc="read a key from the dokku-registry configuration for an app"
   declare APP="$1" KEY="$2"
-  verify_app_name "$APP"
   
   if [[ ! -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}" ]]; then
     exit 1
@@ -51,7 +47,6 @@ fn-registry-config-read() {
 fn-registry-config-write() {
   declare desc="read a key from the dokku-registry configuration for an app"
   declare APP="$1" KEY="$2" VALUE="$3"
-  verify_app_name "$APP"
 
   mkdir -p "${PLUGIN_CONFIG_ROOT}/${APP}"
   echo "$VALUE" > "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
@@ -62,7 +57,6 @@ fn-registry-enabled() {
   declare desc="check if registry is enabled for an app"
   declare APP="$1"
   local DOKKU_REGISTRY_SERVER REGISTRY_ENABLED
-  verify_app_name "$APP"
 
   DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" "server")
   REGISTRY_ENABLED=false
@@ -76,7 +70,6 @@ fn-registry-pull() {
   declare desc="pull an image from an remote repository"
   declare APP="$1" TAG="$2"
   local DOKKU_REGISTRY_SERVER IMAGE_REPO
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
@@ -103,7 +96,6 @@ fn-registry-push() {
   declare desc="push an image to an remote repository"
   declare APP="$1" TAG="$2"
   local DOCKER_HOST DOKKU_DEFAULT_DOCKER_ARGS DOKKU_REGISTRY_SERVER IMAGE IMAGE_ID IMAGE_REPO IMAGE_TAG
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
@@ -157,7 +149,6 @@ fn-registry-remote-repository() {
   declare desc="retrieves the latest tag for an app"
   declare APP="$1"
   local DOKKU_REGISTRY_SERVER
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
@@ -171,7 +162,6 @@ fn-registry-tag-increment() {
   declare desc="increments the latest tag version for an app"
   declare APP="$1"
   local DOKKU_REGISTRY_TAG_VERSION
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
@@ -191,7 +181,6 @@ fn-registry-tag-latest-local() {
   declare desc="retrieves the latest tag for an app"
   declare APP="$1"
   local DOKKU_REGISTRY_TAG_VERSION
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
@@ -209,7 +198,6 @@ fn-registry-deployed-image-repo() {
   declare desc="retrieves the current image repo username prefixed to /APP"
   declare APP="$1"
   local DOKKU_REGISTRY_USERNAME
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0

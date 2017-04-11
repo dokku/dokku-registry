@@ -6,7 +6,6 @@ set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 registry-deployed-app-remote-repository-hook() {
   declare desc="outputs the associated registry repository to stdout"
   declare APP="$1"
-  verify_app_name "$APP"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
