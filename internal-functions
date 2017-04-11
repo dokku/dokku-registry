@@ -126,7 +126,7 @@ fn-registry-push() {
 
   DOKKU_DEFAULT_DOCKER_ARGS=$(: | plugn trigger docker-args-deploy "$APP" "$IMAGE_TAG")
   # shellcheck disable=SC2086
-  DOCKER_HOST=$(echo $DOKKU_DEFAULT_DOCKER_ARGS | grep -Eo "^-H (.*)" | cut -d' ' -f2)
+  DOCKER_HOST="$(echo $DOKKU_DEFAULT_DOCKER_ARGS | grep -Eo "^-H (.*)" | cut -d' ' -f2 || true)"
   if [[ -n "$DOCKER_HOST" ]]; then
     docker -H "$DOCKER_HOST" rmi "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
     docker -H "$DOCKER_HOST" rmi "${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
