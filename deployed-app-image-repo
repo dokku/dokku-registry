@@ -12,7 +12,7 @@ registry-deployed-app-image-repo-hook() {
     return 0
   fi
 
-  fn-registry-image-repo "$APP"
+  fn-registry-deployed-image-repo "$APP"
 }
 
 registry-deployed-app-image-repo-hook "$@"

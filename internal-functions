@@ -197,7 +197,7 @@ fn-registry-tag-latest-local() {
   echo "$DOKKU_REGISTRY_TAG_VERSION"
 }
 
-fn-registry-image-repo() {
+fn-registry-deployed-image-repo() {
   declare desc="retrieves the current image repo username prefixed to /APP"
   declare APP="$1"
   local DOKKU_REGISTRY_USERNAME
