@@ -1,16 +1,16 @@
-# dokku-registry [![Build Status](https://travis-ci.org/josegonzalez/dokku-registry.svg?branch=master)](https://travis-ci.org/josegonzalez/dokku-registry)
+# dokku-registry [![Build Status](https://travis-ci.org/dokku/dokku-registry.svg?branch=master)](https://travis-ci.org/dokku/dokku-registry)
 
 Manages interaction with remote Docker Registries.
 
 ## requirements
 
-- dokku 0.7.0+
+- dokku 0.12.0+
 - docker 1.12.x
 
 ## installation
 
 ```shell
-dokku plugin:install https://github.com/josegonzalez/dokku-registry.git registry
+dokku plugin:install https://github.com/dokku/dokku-registry.git registry
 ```
 
 ## commands
