@@ -9,6 +9,8 @@ ALPHA (DO NOT USE): Manages interaction with remote Docker Registries.
 
 ## installation
 
+> WARNING: This plugin is likely to change in functionality and break workflows, so please do not use this unless you are absolutely sure you're okay with that.
+
 ```shell
 dokku plugin:install https://github.com/dokku/dokku-registry.git registry
 ```
