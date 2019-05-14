@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")" )" && pwd)/config"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+registry-cleanup-cmd() {
+  declare desc="cleans up old local images"
+  declare APP="$2"
+  local cmd="$1"
+  local DOKKU_REGISTRY_SERVER IMAGE_REPO IMAGE_TAG TAG
+  verify_app_name "$APP"
+
+  dokku_log_info1 "Cleaning up old local images"
+  DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
+  IMAGE_REPO=$(fn-registry-image-repo "$APP")
+  IMAGE_TAG="$(get_running_image_tag "$APP")"
+  TAG="$(fn-registry-tag-latest-local "$APP")"
+
+  fn-registry-image-cleanup "$APP" "$DOKKU_REGISTRY_SERVER" "$IMAGE_REPO" "$IMAGE_TAG" "$TAG"
+}
+
+registry-cleanup-cmd "$@"

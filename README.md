@@ -18,6 +18,7 @@ dokku plugin:install https://github.com/dokku/dokku-registry.git registry
 ## commands
 
 ```shell
+registry:cleanup <app>                        # Cleans up old local images
 registry:login <server> <username> <password> # Logs into a docker registry
 registry:report <app> [<flag>]                # Shows the full report for an app
 registry:pull <app> <tag>                     # Pull an image from a docker registry
