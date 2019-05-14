@@ -24,7 +24,6 @@ registry:report <app> [<flag>]                # Shows the full report for an app
 registry:pull <app> <tag>                     # Pull an image from a docker registry
 registry:push <app> <tag>                     # Push an image to a docker registry
 registry:set <app> <key> [<value>]            # Set or clear a key
-registry:tag-latest-local <app>               # Shows latest local tag version
 ```
 
 ## usage

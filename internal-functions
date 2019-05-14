@@ -214,7 +214,6 @@ fn-registry-help-content() {
     ${PLUGIN_COMMAND_PREFIX}:push <app> <tag>, Push an image to the remote registry
     ${PLUGIN_COMMAND_PREFIX}:report <app>, Display the configured registry status for an app
     ${PLUGIN_COMMAND_PREFIX}:set <app> <key> <value>, Set or clear a key
-    ${PLUGIN_COMMAND_PREFIX}:tag-latest-local <app>, Shows latest local tag version
 help_content
 }
 
