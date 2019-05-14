@@ -28,7 +28,7 @@ registry:set <app> <key> [<value>]            # Set or clear a key
 
 ## usage
 
-To enable automatic pushing to a remote registry, you'll need to first login to that registry:
+To enable automatic pushing to a remote registry, you will need to first login to that registry:
 
 ```shell
 dokku registry:login hub.docker.com username password

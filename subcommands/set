@@ -23,7 +23,7 @@ registry-set-cmd() {
   [[ -z "$KEY" ]] && dokku_log_fail "No key specified"
 
   if ! fn-in-array "$KEY" "${VALID_KEYS[@]}"; then
-    dokku_log_fail "Invalid key specified, valid keys include: image, server"
+    dokku_log_fail "Invalid key specified, valid keys include: image-repo, server"
   fi
 
   if [[ -n "$VALUE" ]]; then
