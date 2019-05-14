@@ -209,7 +209,7 @@ help_content
 
 cmd-registry-help() {
   if [[ $1 = "${PLUGIN_COMMAND_PREFIX}:help" ]] ; then
-    echo -e "Usage: dokku $PLUGIN_COMMAND_PREFIX[:COMMAND] <app> [<username>] [<tag>] [<username>] [<password>]"
+    echo -e "Usage: dokku $PLUGIN_COMMAND_PREFIX[:COMMAND] <app> [args...]"
     echo ''
     echo 'Manages interaction with remote Docker Registries.'
     echo ''
