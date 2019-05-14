@@ -39,6 +39,12 @@ You also need to set the registry for each app you desire to integrate with:
 dokku registry:set APP_NAME server DOCKER_REGISTRY
 ```
 
+The default image repository is `dokku/APP`. This may be changed via the following `registry:set` call:
+
+```shell
+dokku registry:set node-js-app image-repo dokku/node-js-app
+```
+
 Once set, this plugin will:
 
 - on `post-release`, create a tagged image with an auto-incrementing tag number

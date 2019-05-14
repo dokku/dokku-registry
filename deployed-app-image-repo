@@ -4,14 +4,14 @@ source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
 registry-deployed-app-image-repo-hook() {
-  declare desc="outputs the current image repo username prefixed to /APP to stdout"
+  declare desc="outputs the current image repo to stdout"
   declare APP="$1"
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
   fi
 
-  fn-registry-deployed-image-repo "$APP"
+  fn-registry-image-repo "$APP"
 }
 
 registry-deployed-app-image-repo-hook "$@"
