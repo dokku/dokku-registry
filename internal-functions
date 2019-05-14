@@ -143,6 +143,14 @@ fn-registry-image-cleanup() {
     fi
     OLD_TAG=$((OLD_TAG - 1))
   done
+
+  docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}'
+  docker rmi "$(docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
+  docker rmi "$(docker images "${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
+  if [[ -n "$DOCKER_HOST" ]]; then
+    docker -H "$DOCKER_HOST" rmi "$(docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
+    docker -H "$DOCKER_HOST" rmi "$(docker images "${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
+  fi
 }
 
 fn-registry-image-repo() {
