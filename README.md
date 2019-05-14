@@ -31,13 +31,13 @@ registry:tag-latest-local <app>               # Shows latest local tag version
 To enable automatic pushing to a remote registry, you'll need to first login to that registry:
 
 ```shell
-dokku registry:login REGISTRY_SERVER REGISTRY_USERNAME REGISTRY_PASSWORD
+dokku registry:login hub.docker.com username password
 ```
 
 You also need to set the registry for each app you desire to integrate with:
 
 ```shell
-dokku registry:set APP_NAME server DOCKER_REGISTRY
+dokku registry:set node-js-app server hub.docker.com
 ```
 
 The default image repository is `dokku/APP`. This may be changed via the following `registry:set` call:
