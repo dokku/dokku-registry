@@ -53,3 +53,12 @@ Once set, this plugin will:
 - delete the new tag locally
 
 Application deletion *will not* clean up remote repositories. Please keep this in mind and adjust your workflow for application deletion accordingly.
+
+### settable options
+
+The following options may be set via `registry:set`:
+
+- `image-repo` (optional, default `dokku/APP`): The image repository to use for pushes. This will default to `dokku/APP`, where `APP` is the app name.
+- `server` (required): The remote registry to push to.
+
+Calling `dokku registry:set APP KEY` with no value will result in unsetting that key.
