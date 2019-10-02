@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")" )" && pwd)/config"
+source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)/config"
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
-set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
 
 fn-in-array() {
   declare desc="return true if value ($1) is in list (all other arguments)"
@@ -16,7 +17,8 @@ fn-in-array() {
 
 registry-set-cmd() {
   declare desc="sets a registry configuration value for an app"
-  local cmd="$PLUGIN_COMMAND_PREFIX:set" argv=("$@"); [[ ${argv[0]} == "$cmd" ]] && shift 1
+  local cmd="$PLUGIN_COMMAND_PREFIX:set" argv=("$@")
+  [[ ${argv[0]} == "$cmd" ]] && shift 1
   declare APP="$1" KEY="$2" VALUE="$3"
   local VALID_KEYS=("image-repo" "server")
   [[ -z "$APP" ]] && dokku_log_fail "Please specify an app to run the command on"

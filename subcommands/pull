@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")" )" && pwd)/config"
+source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)/config"
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
-set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
 
 registry-pull-cmd() {
   declare desc="pulls a tag from a docker registry"

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
-set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
 
 fn-registry-config-delete() {
   declare desc="delete a key from the dokku-registry configuration for an app"
@@ -36,7 +37,7 @@ fn-registry-config-get() {
 fn-registry-config-read() {
   declare desc="read a key from the dokku-registry configuration for an app"
   declare APP="$1" KEY="$2"
-  
+
   if [[ ! -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}" ]]; then
     exit 1
   fi
@@ -49,7 +50,7 @@ fn-registry-config-write() {
   declare APP="$1" KEY="$2" VALUE="$3"
 
   mkdir -p "${PLUGIN_CONFIG_ROOT}/${APP}"
-  echo "$VALUE" > "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
+  echo "$VALUE" >"${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
   chmod 600 "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
 }
 
@@ -138,11 +139,11 @@ fn-registry-image-cleanup() {
   # cleanup up to 10 old images
   TEN_IMAGES_AGO_TAG=$((TAG - 12))
   while [[ "$OLD_TAG" -gt 0 ]]; do
-    docker rmi "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
-    docker rmi "${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
+    docker rmi "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${OLD_TAG}" &>/dev/null || true
+    docker rmi "${IMAGE_REPO}:${OLD_TAG}" &>/dev/null || true
     if [[ -n "$DOCKER_HOST" ]]; then
-      docker -H "$DOCKER_HOST" rmi "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
-      docker -H "$DOCKER_HOST" rmi "${IMAGE_REPO}:${OLD_TAG}" &> /dev/null || true
+      docker -H "$DOCKER_HOST" rmi "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${OLD_TAG}" &>/dev/null || true
+      docker -H "$DOCKER_HOST" rmi "${IMAGE_REPO}:${OLD_TAG}" &>/dev/null || true
     fi
     OLD_TAG=$((OLD_TAG - 1))
     if [[ "$TEN_IMAGES_AGO_TAG" == "$OLD_TAG" ]]; then
@@ -150,11 +151,11 @@ fn-registry-image-cleanup() {
     fi
   done
 
-  docker rmi "$(docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
-  docker rmi "$(docker images "${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
+  docker rmi "$(docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &>/dev/null || true
+  docker rmi "$(docker images "${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &>/dev/null || true
   if [[ -n "$DOCKER_HOST" ]]; then
-    docker -H "$DOCKER_HOST" rmi "$(docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
-    docker -H "$DOCKER_HOST" rmi "$(docker images "${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &> /dev/null || true
+    docker -H "$DOCKER_HOST" rmi "$(docker images "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &>/dev/null || true
+    docker -H "$DOCKER_HOST" rmi "$(docker images "${IMAGE_REPO}" --filter "dangling=true" --format '{{.ID}}')" &>/dev/null || true
   fi
 }
 
@@ -218,7 +219,7 @@ fn-registry-tag-latest-local() {
 
 fn-registry-help-content() {
   declare desc="return registry plugin help content"
-  cat<<help_content
+  cat <<help_content
     ${PLUGIN_COMMAND_PREFIX} <app>, Display the configured registry status for an application
     ${PLUGIN_COMMAND_PREFIX}:cleanup <app>, Cleans up old local images
     ${PLUGIN_COMMAND_PREFIX}:login <server> <username> <password>, Logs into a docker registry
@@ -230,7 +231,7 @@ help_content
 }
 
 cmd-registry-help() {
-  if [[ $1 = "${PLUGIN_COMMAND_PREFIX}:help" ]] ; then
+  if [[ $1 == "${PLUGIN_COMMAND_PREFIX}:help" ]]; then
     echo -e "Usage: dokku $PLUGIN_COMMAND_PREFIX[:COMMAND] <app> [args...]"
     echo ''
     echo 'Manages interaction with remote Docker Registries.'
@@ -240,7 +241,7 @@ cmd-registry-help() {
   elif [[ $(ps -o command= $PPID) == *"--all"* ]]; then
     fn-registry-help-content
   else
-    cat<<help_desc
+    cat <<help_desc
     ${PLUGIN_COMMAND_PREFIX}, Manages interaction with remote Docker Registries
 help_desc
   fi
@@ -248,7 +249,8 @@ help_desc
 
 cmd-registry-report() {
   declare desc="Display the configured registry status for an application"
-  declare cmd="$PLUGIN_COMMAND_PREFIX:report" argv=("$@"); [[ ${argv[0]} == "$cmd" ]] && shift 1
+  declare cmd="$PLUGIN_COMMAND_PREFIX:report" argv=("$@")
+  [[ ${argv[0]} == "$cmd" ]] && shift 1
   declare APP="$1" INFO_FLAG="$2"
   local flag flag_map key match valid_flags value_exists
   [[ -z "$APP" ]] && dokku_log_fail "Please specify an app to run the command on"

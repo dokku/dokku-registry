@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
-set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
 
 registry-uninstall() {
   declare PLUGIN="$1"
