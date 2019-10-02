@@ -169,7 +169,7 @@ fn-registry-image-repo() {
 }
 
 fn-registry-remote-repository() {
-  declare desc="retrieves the latest tag for an app"
+  declare desc="retrieves the remote repository for an app"
   declare APP="$1"
   local DOKKU_REGISTRY_SERVER
 
