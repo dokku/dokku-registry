@@ -258,7 +258,7 @@ cmd-registry-report() {
   flag_map=(
     "--registry-enabled: $(fn-registry-enabled "$APP")"
     "--registry-image: $(fn-registry-image-repo "$APP")"
-    "--registry-server: $(fn-registry-config-get "$APP" "server")"
+    "--registry-server: $(fn-registry-remote-repository "$APP")"
     "--registry-tag-latest-local: $(fn-registry-tag-latest-local "$APP")"
   )
   if [[ -z "$INFO_FLAG" ]]; then
