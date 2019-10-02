@@ -173,10 +173,6 @@ fn-registry-remote-repository() {
   declare APP="$1"
   local DOKKU_REGISTRY_SERVER
 
-  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
-    return 0
-  fi
-
   DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" "server")
   echo "$DOKKU_REGISTRY_SERVER"
 }
