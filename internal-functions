@@ -93,10 +93,30 @@ fn-registry-pull() {
   dokku_log_verbose_quiet "Image $IMAGE_REPO:$TAG pulled"
 }
 
+fn-registry-create-repository() {
+  declare APP="$1" DOKKU_REGISTRY_SERVER="$2" IMAGE_REPO="$3"
+
+  [[ -z "$DOKKU_REGISTRY_SERVER" ]] && DOKKU_REGISTRY_SERVER=$(fn-registry-remote-repository "$APP")
+  [[ -z "$IMAGE_REPO" ]] && IMAGE_REPO=$(fn-registry-image-repo "$APP")
+
+  fn-registry-create-repository-ecr "$DOKKU_REGISTRY_SERVER" "$IMAGE_REPO"
+}
+
+fn-registry-create-repository-ecr() {
+  declare DOKKU_REGISTRY_SERVER="$1" IMAGE_REPO="$2"
+
+  if [[ "$DOKKU_REGISTRY_SERVER" == *amazonaws.com* ]] && [[ "$DOKKU_REGISTRY_SERVER" == *.dkr.ecr.* ]]; then
+    EXISTING_AWS_REPOSITORY="$(aws ecr describe-repositories --repository-names "${IMAGE_REPO}" --query "repositories[0].repositoryName" --output text 2>/dev/null || true)"
+    if [[ -z "$EXISTING_AWS_REPOSITORY" ]]; then
+      aws ecr create-repository
+    fi
+  fi
+}
+
 fn-registry-push() {
   declare desc="push an image to an remote repository"
   declare APP="$1" TAG="$2"
-  local DOCKER_HOST DOKKU_DEFAULT_DOCKER_ARGS DOKKU_REGISTRY_SERVER IMAGE IMAGE_ID IMAGE_REPO IMAGE_TAG
+  local DOCKER_HOST DOKKU_DEFAULT_DOCKER_ARGS DOKKU_REGISTRY_SERVER EXISTING_AWS_REPOSITORY IMAGE IMAGE_ID IMAGE_REPO IMAGE_TAG
 
   if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
     return 0
@@ -116,6 +136,8 @@ fn-registry-push() {
   dokku_log_verbose_quiet "Tagging $IMAGE_REPO:$TAG in registry format"
   docker tag "$IMAGE_ID" "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}"
   docker tag "$IMAGE_ID" "${IMAGE_REPO}:${TAG}"
+
+  fn-registry-create-repository "$APP" "$DOKKU_REGISTRY_SERVER" "$IMAGE_REPO"
 
   dokku_log_verbose_quiet "Pushing $IMAGE_REPO:$TAG"
   docker push "${DOKKU_REGISTRY_SERVER}${IMAGE_REPO}:${TAG}"
@@ -178,6 +200,11 @@ fn-registry-remote-repository() {
   if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
     DOKKU_REGISTRY_SERVER="${DOKKU_REGISTRY_SERVER%/}/"
   fi
+
+  if [[ "$DOKKU_REGISTRY_SERVER" == "hub.docker.com/" ]]; then
+    return
+  fi
+
   echo "$DOKKU_REGISTRY_SERVER"
 }
 
@@ -222,6 +249,7 @@ fn-registry-help-content() {
   cat <<help_content
     ${PLUGIN_COMMAND_PREFIX} <app>, Display the configured registry status for an application
     ${PLUGIN_COMMAND_PREFIX}:cleanup <app>, Cleans up old local images
+    ${PLUGIN_COMMAND_PREFIX}:create-repository <app>, Creates an image repository on the remote server
     ${PLUGIN_COMMAND_PREFIX}:login <server> <username> <password>, Logs into a docker registry
     ${PLUGIN_COMMAND_PREFIX}:pull <app> <tag>, Pull an image from the remote registry
     ${PLUGIN_COMMAND_PREFIX}:push <app> <tag>, Push an image to the remote registry

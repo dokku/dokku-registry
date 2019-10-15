@@ -19,6 +19,7 @@ dokku plugin:install https://github.com/dokku/dokku-registry.git registry
 
 ```shell
 registry:cleanup <app>                        # Cleans up old local images
+registry:create-repository <app>              # Creates an image repository on the remote server
 registry:login <server> <username> <password> # Logs into a docker registry
 registry:report <app> [<flag>]                # Shows the full report for an app
 registry:pull <app> <tag>                     # Pull an image from a docker registry
@@ -49,10 +50,20 @@ dokku registry:set node-js-app image-repo dokku/node-js-app
 Once set, this plugin will:
 
 - on `post-release`, create a tagged image with an auto-incrementing tag number
-- push the new tag to the remote registry
+- push the new tag to the remote registry (creating the repository if necessary)
 - delete the new tag locally
 
 Application deletion *will not* clean up remote repositories. Please keep this in mind and adjust your workflow for application deletion accordingly.
+
+### creating repositories
+
+> This currently only affects ECR registries
+
+The `registry:create-repository` command can be used to create repositories for a configured app.
+
+```shell
+dokku registry:create-repository node-js-app
+```
 
 ### settable options
 

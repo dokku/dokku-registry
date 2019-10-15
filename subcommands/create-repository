@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)/config"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+registry-create-repository-cmd() {
+  declare desc="creates an image repository on the remote server"
+  declare APP="$2"
+  local cmd="$1"
+
+  if [[ "$(fn-registry-enabled "$APP")" == "false" ]]; then
+    dokku_log_fail "Registry is not enabled for specified app"
+  fi
+
+  dokku_log_info1 "Creating image repository"
+  fn-registry-create-repository "$APP"
+}
+
+registry-create-repository-cmd "$@"
