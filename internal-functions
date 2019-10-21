@@ -104,11 +104,13 @@ fn-registry-create-repository() {
 
 fn-registry-create-repository-ecr() {
   declare DOKKU_REGISTRY_SERVER="$1" IMAGE_REPO="$2"
+  local AWS_REGION EXISTING_AWS_REPOSITORY
 
   if [[ "$DOKKU_REGISTRY_SERVER" == *amazonaws.com* ]] && [[ "$DOKKU_REGISTRY_SERVER" == *.dkr.ecr.* ]]; then
-    EXISTING_AWS_REPOSITORY="$(aws ecr describe-repositories --repository-names "${IMAGE_REPO}" --query "repositories[0].repositoryName" --output text 2>/dev/null || true)"
+    AWS_REGION="$(echo "$DOKKU_REGISTRY_SERVER" | cut -d'.' -f4)"
+    EXISTING_AWS_REPOSITORY="$(aws ecr describe-repositories --repository-names "${IMAGE_REPO}"  --region "$AWS_REGION" --query "repositories[0].repositoryName" --output text 2>/dev/null || true)"
     if [[ -z "$EXISTING_AWS_REPOSITORY" ]]; then
-      aws ecr create-repository
+      aws ecr create-repository --repository-name "${IMAGE_REPO}" --region "$AWS_REGION"
     fi
   fi
 }
