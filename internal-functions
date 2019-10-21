@@ -110,7 +110,7 @@ fn-registry-create-repository-ecr() {
     AWS_REGION="$(echo "$DOKKU_REGISTRY_SERVER" | cut -d'.' -f4)"
     EXISTING_AWS_REPOSITORY="$(aws ecr describe-repositories --repository-names "${IMAGE_REPO}"  --region "$AWS_REGION" --query "repositories[0].repositoryName" --output text 2>/dev/null || true)"
     if [[ -z "$EXISTING_AWS_REPOSITORY" ]]; then
-      aws ecr create-repository --repository-name "${IMAGE_REPO}" --region "$AWS_REGION"
+      aws ecr create-repository --repository-name "${IMAGE_REPO}" --region "$AWS_REGION" >/dev/null || dokku_log_fail "Failed to create ecr repository"
     fi
   fi
 }
