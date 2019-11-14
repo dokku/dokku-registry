@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
@@ -9,7 +9,7 @@ registry-uninstall() {
     return
   fi
 
-  fn-registry-config-destroy "_all_"
+  fn-plugin-property-destroy "registry" "_all_"
 }
 
 registry-uninstall "$@"
