@@ -1,6 +1,6 @@
 # dokku-registry [![Build Status](https://travis-ci.org/dokku/dokku-registry.svg?branch=master)](https://travis-ci.org/dokku/dokku-registry)
 
-ALPHA (DO NOT USE): Manages interaction with remote Docker Registries.
+Manages interaction with remote Docker Registries.
 
 ## requirements
 
