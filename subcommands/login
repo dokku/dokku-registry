@@ -23,7 +23,7 @@ registry-login-cmd() {
   fi
 
   dokku_log_info1 "Logging into ${REGISTRY_SERVER}"
-  docker login --username "$REGISTRY_USERNAME" --password "$REGISTRY_PASSWORD" "$REGISTRY_SERVER" | sed "s/^/       /"
+  echo "$REGISTRY_PASSWORD" | docker login --username "$REGISTRY_USERNAME" --password-stdin "$REGISTRY_SERVER" | sed "s/^/       /"
 }
 
 registry-login-cmd "$@"
