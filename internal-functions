@@ -279,13 +279,34 @@ help_desc
 
 cmd-registry-report() {
   declare desc="Display the configured registry status for an application"
-  declare cmd="$PLUGIN_COMMAND_PREFIX:report" argv=("$@")
-  [[ ${argv[0]} == "$cmd" ]] && shift 1
-  declare APP="$1" INFO_FLAG="$2"
-  local flag flag_map key match valid_flags value_exists
-  [[ -z "$APP" ]] && dokku_log_fail "Please specify an app to run the command on"
-  verify_app_name "$APP"
+  declare cmd="registry:report"
+  local INSTALLED_APPS=$(dokku_apps)
+  local APP="$2" INFO_FLAG="$3"
 
+  if [[ -n "$APP" ]] && [[ "$APP" == --* ]]; then
+    INFO_FLAG="$APP"
+    APP=""
+  fi
+
+  if [[ -z "$APP" ]] && [[ -z "$INFO_FLAG" ]]; then
+    INFO_FLAG="true"
+  fi
+
+  if [[ -z "$APP" ]]; then
+    for app in $INSTALLED_APPS; do
+      cmd-registry-report-single "$app" "$INFO_FLAG" | tee || true
+    done
+  else
+    cmd-registry-report-single "$APP" "$INFO_FLAG"
+  fi
+}
+
+cmd-registry-report-single() {
+  declare APP="$1" INFO_FLAG="$2"
+  if [[ "$INFO_FLAG" == "true" ]]; then
+    INFO_FLAG=""
+  fi
+  verify_app_name "$APP"
   flag_map=(
     "--registry-enabled: $(fn-registry-enabled "$APP")"
     "--registry-image: $(fn-registry-image-repo "$APP")"
@@ -293,14 +314,14 @@ cmd-registry-report() {
     "--registry-tag-latest-local: $(fn-registry-tag-latest-local "$APP")"
   )
   if [[ -z "$INFO_FLAG" ]]; then
-    dokku_log_info2_quiet "${APP} Registry Information"
+    dokku_log_info2_quiet "${APP} registry information"
     for flag in "${flag_map[@]}"; do
       key="$(echo "${flag#--}" | cut -f1 -d' ' | tr - ' ')"
       dokku_log_verbose "$(printf "%-20s %-25s" "${key^}" "${flag#*: }")"
     done
   else
-    match=false
-    value_exists=false
+    local match=false
+    local value_exists=false
     for flag in "${flag_map[@]}"; do
       valid_flags="${valid_flags} $(echo "$flag" | cut -d':' -f1)"
       if [[ "$flag" == "${INFO_FLAG}:"* ]]; then
@@ -314,6 +335,6 @@ cmd-registry-report() {
       fi
     done
     [[ "$match" == "true" ]] || dokku_log_fail "Invalid flag passed, valid flags:${valid_flags}"
-    [[ "$value_exists" == "true" ]] || dokku_log_fail "not deployed"
+    [[ "$value_exists" == "true" ]] || echo ""
   fi
 }
