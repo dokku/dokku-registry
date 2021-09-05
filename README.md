@@ -1,5 +1,7 @@
 # dokku-registry [![Build Status](https://travis-ci.org/dokku/dokku-registry.svg?branch=master)](https://travis-ci.org/dokku/dokku-registry)
 
+> **Deprecated in favor of the [official Registry plugin introduced in 0.25.x](https://dokku.com/docs/advanced-usage/registry-management/)
+
 Manages interaction with remote Docker Registries.
 
 ## requirements
