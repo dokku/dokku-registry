@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
 registry-post-delete() {
   declare APP="$1"
-  fn-registry-config-destroy "$APP"
+  fn-plugin-property-destroy "registry" "$APP"
 }
 
 registry-post-delete "$@"

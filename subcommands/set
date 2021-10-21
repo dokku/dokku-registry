@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 source "$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)/config"
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
 source "$PLUGIN_AVAILABLE_PATH/registry/internal-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
@@ -34,10 +35,10 @@ registry-set-cmd() {
     fi
 
     dokku_log_info2_quiet "Setting ${KEY} to ${VALUE}"
-    fn-registry-config-write "$APP" "$KEY" "$VALUE"
+    fn-plugin-property-write "registry" "$APP" "$KEY" "$VALUE"
   else
     dokku_log_info2_quiet "Unsetting ${KEY}"
-    fn-registry-config-delete "$APP" "$KEY"
+    fn-plugin-property-delete "registry" "$APP" "$KEY"
   fi
 }
 

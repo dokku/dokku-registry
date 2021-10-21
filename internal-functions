@@ -1,65 +1,17 @@
 #!/usr/bin/env bash
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
-fn-registry-config-delete() {
-  declare desc="delete a key from the dokku-registry configuration for an app"
-  declare APP="$1" KEY="$2"
-
-  rm -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
-}
-
-fn-registry-config-destroy() {
-  declare desc="destroy the dokku-registry configuration for an app"
-  declare APP="$1"
-
-  if [[ "$APP" == "_all_" ]]; then
-    rm -rf "${PLUGIN_CONFIG_ROOT:?}"
-  else
-    rm -rf "${PLUGIN_CONFIG_ROOT:?}/${APP}"
-  fi
-}
-
-fn-registry-config-get() {
-  declare desc="returns the configured key for an app"
-  declare APP="$1" KEY="$2" DEFAULT="$3"
-  local CONFIG_VALUE
-
-  CONFIG_VALUE="$(fn-registry-config-read "$APP" "$KEY" || true)"
-  if [[ -z "$CONFIG_VALUE" ]]; then
-    CONFIG_VALUE="$DEFAULT"
-  fi
-  echo "$CONFIG_VALUE"
-}
-
-fn-registry-config-read() {
-  declare desc="read a key from the dokku-registry configuration for an app"
-  declare APP="$1" KEY="$2"
-
-  if [[ ! -f "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}" ]]; then
-    exit 1
-  fi
-
-  cat "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
-}
-
-fn-registry-config-write() {
-  declare desc="read a key from the dokku-registry configuration for an app"
-  declare APP="$1" KEY="$2" VALUE="$3"
-
-  mkdir -p "${PLUGIN_CONFIG_ROOT}/${APP}"
-  echo "$VALUE" >"${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
-  chmod 600 "${PLUGIN_CONFIG_ROOT}/${APP}/${KEY}"
-}
 
 fn-registry-enabled() {
   declare desc="check if registry is enabled for an app"
   declare APP="$1"
   local DOKKU_REGISTRY_SERVER REGISTRY_ENABLED
 
-  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" "server")
+  DOKKU_REGISTRY_SERVER=$(fn-plugin-property-get "registry" "$APP" "server" "")
   REGISTRY_ENABLED=false
   if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
     REGISTRY_ENABLED=true
@@ -189,7 +141,7 @@ fn-registry-image-repo() {
   local IMAGE_REPO
 
   IMAGE_REPO=$(get_app_image_repo "$APP")
-  IMAGE_REPO=$(fn-registry-config-get "$APP" "image-repo" "$IMAGE_REPO")
+  IMAGE_REPO=$(fn-plugin-property-get "registry" "$APP" "image-repo" "$IMAGE_REPO")
   echo "$IMAGE_REPO"
 }
 
@@ -198,7 +150,7 @@ fn-registry-remote-repository() {
   declare APP="$1"
   local DOKKU_REGISTRY_SERVER
 
-  DOKKU_REGISTRY_SERVER=$(fn-registry-config-get "$APP" "server")
+  DOKKU_REGISTRY_SERVER=$(fn-plugin-property-get "registry" "$APP" "server" "")
   if [[ -n "$DOKKU_REGISTRY_SERVER" ]]; then
     DOKKU_REGISTRY_SERVER="${DOKKU_REGISTRY_SERVER%/}/"
   fi
@@ -219,14 +171,14 @@ fn-registry-tag-increment() {
     return 0
   fi
 
-  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" "tag-version")
+  DOKKU_REGISTRY_TAG_VERSION=$(fn-plugin-property-get "registry" "$APP" "tag-version" "")
   if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
     DOKKU_REGISTRY_TAG_VERSION=0
   fi
 
   DOKKU_REGISTRY_TAG_VERSION=$((DOKKU_REGISTRY_TAG_VERSION + 1))
   dokku_log_verbose_quiet "Bumping tag to $DOKKU_REGISTRY_TAG_VERSION"
-  fn-registry-config-write "$APP" "tag-version" "$DOKKU_REGISTRY_TAG_VERSION"
+  fn-plugin-property-write "registry" "$APP" "tag-version" "$DOKKU_REGISTRY_TAG_VERSION"
 }
 
 fn-registry-tag-latest-local() {
@@ -238,7 +190,7 @@ fn-registry-tag-latest-local() {
     return 0
   fi
 
-  DOKKU_REGISTRY_TAG_VERSION=$(fn-registry-config-get "$APP" "tag-version")
+  DOKKU_REGISTRY_TAG_VERSION=$(fn-plugin-property-get "registry" "$APP" "tag-version" "")
   if [[ -z "$DOKKU_REGISTRY_TAG_VERSION" ]]; then
     echo 1
   fi

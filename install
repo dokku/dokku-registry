@@ -4,8 +4,7 @@ set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
 plugin-install() {
-  mkdir -p "$PLUGIN_CONFIG_ROOT"
-  chown dokku:dokku "$PLUGIN_CONFIG_ROOT"
+  fn-plugin-property-setup "registry"
 }
 
 plugin-install "$@"

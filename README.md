@@ -6,8 +6,8 @@ Manages interaction with remote Docker Registries.
 
 ## requirements
 
-- dokku 0.12.0+
-- docker 1.12.x
+- dokku 0.19.0+
+- docker 1.14.x
 
 ## installation
 
